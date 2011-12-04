@@ -39,28 +39,25 @@ module Starscraper
       
       # Not ranked yet
       if (doc.at_css(".snapshot-empty"))
-        data["1v1_league_type"] = -1
-        data["2v2_league_type"] = -1
-        data["3v3_league_type"] = -1
-        data["4v4_league_type"] = -1
         return data
       end
 
       for league in 1..4
         best_team = doc.at_css('#best-team-' + league.to_s)
         current_rank = best_team.at_css('div:eq(2)')
-        league_type = -1
+        league_type = nil
         if current_rank
           league_type = best_team.parent.at_css('span:eq(1)')["class"].split(" ")[1].split("-")[1]
         end
 
         key = "#{league}v#{league}"
 
-        data[key + "_league_type"] = -1 # Not yet ranked
+        # Not yet ranked
+        data[key + "_league"] = nil 
 
-        next if league_type == -1
+        next if league_type.nil?
 
-        data[key + "_league_type"] = league_type.capitalize
+        data[key + "_league"] = league_type.capitalize
 
         tokens = current_rank.inner_html.split('<br>')
         data[key + "_rank"] = tokens[1].split('</strong>')[1].strip.to_i
