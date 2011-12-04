@@ -1,4 +1,4 @@
-## Example
+# Examples
 ```ruby
 pp Starscraper.profile('http://eu.battle.net/sc2/en/profile/1517403/1/boom/')
 
