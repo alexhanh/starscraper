@@ -18,7 +18,6 @@ module Starscraper
       
       # Only continue if HTTP response code is 200 (OK).
       if response.code != 200
-        puts response.code
         return nil
       end
       
