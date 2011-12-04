@@ -8,3 +8,10 @@ pp Starscraper.profile('http://eu.battle.net/sc2/en/profile/1517403/1/boom/')
  "3v3_league"=>nil,
  "4v4_league"=>nil}
 ```
+
+```ruby
+pp Starscraper.profile('http://eu.battle.net/sc2/en/profile/doesnt_exist')
+
+nil
+```
+
