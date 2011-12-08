@@ -18,13 +18,15 @@ module Starscraper
       
       # Only continue if HTTP response code is 200 (OK).
       if response.code != 200
+        puts response.code
         return nil
       end
       
       begin
         doc = Nokogiri::HTML(response.body)
-      rescue StandardError
+      rescue StandardError => e
         # Parsing failed
+        puts e
         return nil
       end
       
@@ -35,6 +37,14 @@ module Starscraper
       return nil if doc.at_css("#profile-wrapper").nil?
 
       data = {}
+      
+      # Portrait
+      portrait_css = doc.at_css("#portrait").at_css(".icon-frame")["style"].split(" ")
+      sheet = portrait_css[1][/portraits\/(\d)/, 1]
+      offset_x = portrait_css[2].gsub(/px/, '')
+      offset_y = portrait_css[3].gsub(/px/, '')
+
+      data["portrait"] = {:sheet => sheet, :x => offset_x, :y => offset_y}
       
       # Not ranked yet
       if (doc.at_css(".snapshot-empty"))
