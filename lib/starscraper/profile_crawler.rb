@@ -11,7 +11,7 @@ module Starscraper
       cookies "int-SC2" => "1"
       
       begin
-        response = ProfileCrawler.get(url)
+        response = ProfileCrawler.get(url + 'ladder/')
       rescue StandardError
         return nil
       end
@@ -46,31 +46,36 @@ module Starscraper
 
       data["portrait"] = {:sheet => sheet, :x => offset_x, :y => offset_y}
       
-      # Not ranked yet
-      if (doc.at_css(".snapshot-empty"))
-        return data
-      end
+      ladder_css = doc.at_css('#ladder-spotlight')
+      rank = ladder_css.at_css('.division').text.strip
+      
+      return data if rank == "Not Yet Ranked"
 
-      for league in 1..4
-        best_team = doc.at_css('#best-team-' + league.to_s)
-        current_rank = best_team.at_css('div:eq(2)')
-        league_type = nil
-        if current_rank
-          league_type = best_team.parent.at_css('span:eq(1)')["class"].split(" ")[1].split("-")[1]
-        end
+      rank = rank.split("\r")[1].split(" ")[1].strip
+      league = ladder_css.at_css('.league').text.split("\r")[1].strip
 
-        key = "#{league}v#{league}"
-
-        # Not yet ranked
-        data[key + "_league"] = nil 
-
-        next if league_type.nil?
-
-        data[key + "_league"] = league_type.capitalize
-
-        tokens = current_rank.inner_html.split('<br>')
-        data[key + "_rank"] = tokens[1].split('</strong>')[1].strip.to_i
-      end
+      data['1v1_league'] = league.capitalize
+      data['1v1_rank'] = rank.to_i
+      # for league in 1..4
+      #   best_team = doc.at_css('#best-team-' + league.to_s)
+      #   current_rank = best_team.at_css('div:eq(2)')
+      #   league_type = nil
+      #   if current_rank
+      #     league_type = best_team.parent.at_css('span:eq(1)')["class"].split(" ")[1].split("-")[1]
+      #   end
+      # 
+      #   key = "#{league}v#{league}"
+      # 
+      #   # Not yet ranked
+      #   data[key + "_league"] = nil 
+      # 
+      #   next if league_type.nil?
+      # 
+      #   data[key + "_league"] = league_type.capitalize
+      # 
+      #   tokens = current_rank.inner_html.split('<br>')
+      #   data[key + "_rank"] = tokens[1].split('</strong>')[1].strip.to_i
+      # end
 
   		data
     end
