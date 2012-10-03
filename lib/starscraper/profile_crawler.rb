@@ -47,12 +47,17 @@ module Starscraper
       data["portrait"] = {:sheet => sheet, :x => offset_x, :y => offset_y}
       
       ladder_css = doc.at_css('#ladder-spotlight')
+
+      # Not yet ranked
+      return data if ladder_css.at_css('.league').nil?
+      
       rank = ladder_css.at_css('.division').text.strip
       
-      return data if rank == "Not Yet Ranked"
+      rank = rank.match(/\d+/)[0]
 
-      rank = rank.split("\r")[1].split(" ")[1].strip
-      league = ladder_css.at_css('.league').text.split("\r")[1].strip
+      # league = ladder_css.at_css('.league').text.split("\r")[1].strip
+      
+      league = ladder_css.at_css('.badge')['class'].split(" ")[1].split("-")[1]
 
       data['1v1_league'] = league.capitalize
       data['1v1_rank'] = rank.to_i
