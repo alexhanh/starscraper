@@ -39,12 +39,15 @@ module Starscraper
       data = {}
       
       # Portrait
-      portrait_css = doc.at_css("#portrait").at_css(".icon-frame")["style"].split(" ")
-      sheet = portrait_css[1][/portraits\/(\d)/, 1]
-      offset_x = portrait_css[2].gsub(/px/, '')
-      offset_y = portrait_css[3].gsub(/px/, '')
+      portrait_css = doc.at_css("#portrait").at_css(".icon-frame")
+      if portrait_css
+        portrait_css = portrait_css["style"].split(" ")
+        sheet = portrait_css[1][/portraits\/(\d)/, 1]
+        offset_x = portrait_css[2].gsub(/px/, '')
+        offset_y = portrait_css[3].gsub(/px/, '')
 
-      data["portrait"] = {:sheet => sheet, :x => offset_x, :y => offset_y}
+        data["portrait"] = {:sheet => sheet, :x => offset_x, :y => offset_y}
+      end
       
       ladder_css = doc.at_css('#ladder-spotlight')
 
